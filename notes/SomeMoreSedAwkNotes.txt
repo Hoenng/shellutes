@@ -1,0 +1,85 @@
+Multiple SED commands on one line - use -e before each command or separate each with semi-colon. AWK is the same.
+
+Default behaviour is to output all lines regardless of whether they have changed.
+Using -n suppresses this. Add p to the command to overcome the suppression for that line:
+sed -n -e 's/MA/Masschusetts/p' list
+This prints only changed lines.
+
+Print the first column (dependent on default separator) of lines that have MA in them.
+awk '/MA/ { print $1 }' list
+Change default separator to comma:
+awk -F, '/MA/ { print $1 }' list
+
+
+REGEX
+
+. Matches any single character except newline
+* Matches any number of the character preceding it
+[...] Matches any one of the class of characters in the brackets
+^ Matches the beginning of the line
+$ MAtches the end of the line
+\{n,m\} Matches a range of occurences of the single character that precedes it. The range begin between n and m.
+\ Escapes the special character that follows
+^ When it is the first character in a [] class it excludes all the characted in the class.
+ 
+ Prints a range of lines from a line ending with 2 to a line ending with 3.
+ sed -n /2$/,/3$/p lines.txt
+ 
+ Deletes from first line to first blank line. It will start deleting from line 1 - if there is no blank line it will delete everything.
+  sed -n 1,/^$/d lines.txt
+ An exclamtion ! after an adress reverses the sense of the match e.g. in the above everything except the lines in range would be deleted.
+ 
+ Range addresses can be nested using {}.
+ 
+ 
+ Substitution
+ [address]s/pattern/replacement/flags
+ Where flags can be:
+ n  a number for the nth occurrence of the pattern
+ g  global
+ p  print
+ w file write to file
+ The substitution is applied to lines matching the address. No address, they are applied to all lines matching pattern
+ 
+ append [line address]a\
+ insert [line address]1\
+ change [line address]c\
+ 
+ Remember - a line address can be a pattern match.
+ 
+ l  list. Lists the contents of the pattern buffer. Will show special characters.
+ sed -n -e l lines.txt
+ 
+ y transform. Transforms characters by position. For example, a becomes x, b becomes y.
+ [address]y/abc/xyz
+ 
+ = following an address prints the line number of the matched line.
+ 
+ [line=address]r file   read the contents of a file into the pattern space
+ [address]w file        writes the content of the pattern space into a file
+ 
+ [line-address]q quit. Stop reading new input and end.
+ 
+ N,D,P are multiline equivalents of the lowercase n,d,p commands.
+ 
+ H  hold. Copy pattern space to hold space.
+ G  get. Copy hold space to pattern space.
+ X  exchange. Swap contents of hold and pattern space.
+ 
+ 
+ 
+ AWK
+ 
+ FS field separator
+ OFS output field separator
+ NF number of fields for the current record
+ RS record separator
+ ORS output record separator
+ FILENAME   current input record
+ FNR current file record number in the current input file
+ 
+ Field and record separators are defined in the BEGIN procedure so they are set befoer input is read.
+ 
+ CONVFMT    controls number to string conversions i.e. number formats. OFMT does the same in the print statement.
+ 
+ 
